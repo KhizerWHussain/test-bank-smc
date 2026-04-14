@@ -2,6 +2,7 @@ package main
 
 import (
 	"encoding/json"
+	"fmt"
 
 	"github.com/hyperledger/fabric-chaincode-go/shim"
 	pb "github.com/hyperledger/fabric-protos-go/peer"
@@ -49,6 +50,9 @@ func (t *PRChainCode) CreateBulkTestDoc(stub hypConnect, args []string, txID str
 
 	var docs []Testdoc
 
+	fmt.Println("CreateBulkTestDoc ===>")
+	fmt.Println("args ===>", args)
+
 	err := json.Unmarshal([]byte(args[0]), &docs)
 	if err != nil {
 		return shim.Error(err.Error())
@@ -72,6 +76,8 @@ func (t *PRChainCode) CreateBulkTestDoc(stub hypConnect, args []string, txID str
 		}
 	}
 
+	fmt.Println("docs ===>", docs)
+
 	RaiseEvent(stub, "BulkTestDocCreated", docs)
 
 	return shim.Success([]byte("Bulk Insert Success"))
@@ -88,6 +94,8 @@ func (t *PRChainCode) GetTestDoc(stub hypConnect, args []string, txID string) pb
 	if err != nil || data == nil {
 		return shim.Error("Document not found")
 	}
+
+	fmt.Println("GetTestDoc ===>", data)
 
 	RaiseEvent(stub, "TestDocRetrieved", data)
 
