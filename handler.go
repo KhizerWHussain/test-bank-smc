@@ -9,13 +9,11 @@ import (
 )
 
 // CREATE SINGLE DOC
-func (t *PRChainCode) CreateTestDoc(stub shim.ChaincodeStubInterface, args []string) pb.Response {
+func (t *PRChainCode) CreateTestDoc(stub hypConnect, args []string, txID string) pb.Response {
 
 	if len(args) < 3 {
 		return shim.Error("Expected id, key, document")
 	}
-
-	txID := stub.GetTxID()
 
 	doc := Testdoc{
 		ID:        args[0],
@@ -27,16 +25,18 @@ func (t *PRChainCode) CreateTestDoc(stub shim.ChaincodeStubInterface, args []str
 
 	bytes, _ := json.Marshal(doc)
 
-	err := stub.PutState(doc.ID, bytes)
+	err := stub.Connection.PutState(doc.ID, bytes)
 	if err != nil {
 		return shim.Error(err.Error())
 	}
+
+	RaiseEvent(stub, "TestDocCreated", doc)
 
 	return shim.Success(bytes)
 }
 
 // BULK INSERT (STRINGIFIED JSON ARRAY)
-func (t *PRChainCode) CreateBulkTestDoc(stub shim.ChaincodeStubInterface, args []string) pb.Response {
+func (t *PRChainCode) CreateBulkTestDoc(stub hypConnect, args []string, txID string) pb.Response {
 
 	if len(args) < 1 {
 		return shim.Error("Expecting JSON array string")
@@ -49,8 +49,6 @@ func (t *PRChainCode) CreateBulkTestDoc(stub shim.ChaincodeStubInterface, args [
 		return shim.Error(err.Error())
 	}
 
-	txID := stub.GetTxID()
-
 	for _, d := range docs {
 
 		d.TxID = txID
@@ -58,7 +56,7 @@ func (t *PRChainCode) CreateBulkTestDoc(stub shim.ChaincodeStubInterface, args [
 
 		bytes, _ := json.Marshal(d)
 
-		err := stub.PutState(d.ID, bytes)
+		err := stub.Connection.PutState(d.ID, bytes)
 		if err != nil {
 			return shim.Error(err.Error())
 		}
@@ -68,13 +66,13 @@ func (t *PRChainCode) CreateBulkTestDoc(stub shim.ChaincodeStubInterface, args [
 }
 
 // GET SINGLE DOC
-func (t *PRChainCode) GetTestDoc(stub shim.ChaincodeStubInterface, args []string) pb.Response {
+func (t *PRChainCode) GetTestDoc(stub hypConnect, args []string, txID string) pb.Response {
 
 	if len(args) < 1 {
 		return shim.Error("ID required")
 	}
 
-	data, err := stub.GetState(args[0])
+	data, err := stub.Connection.GetState(args[0])
 	if err != nil || data == nil {
 		return shim.Error("Document not found")
 	}
