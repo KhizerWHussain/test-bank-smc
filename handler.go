@@ -2,7 +2,6 @@ package main
 
 import (
 	"encoding/json"
-	"time"
 
 	"github.com/hyperledger/fabric-chaincode-go/shim"
 	pb "github.com/hyperledger/fabric-protos-go/peer"
@@ -17,12 +16,18 @@ func (t *PRChainCode) CreateTestDoc(stub hypConnect, args []string, txID string)
 	ID := sanitize(args[0], "string").(string)
 	Key := sanitize(args[1], "string").(string)
 
+	// ✅ Use transaction timestamp (deterministic across all peers)
+	txTimestamp, timestampError := stub.Connection.GetTxTimestamp()
+	if timestampError != nil {
+		return shim.Error(timestampError.Error())
+	}
+
 	doc := Testdoc{
 		ID:        ID,
 		Key:       Key,
 		Document:  "Testdoc",
 		TxID:      txID,
-		Timestamp: time.Now().String(),
+		Timestamp: txTimestamp.String(), // Convert protobuf Timestamp to string for storage
 	}
 
 	bytes, _ := json.Marshal(doc)
@@ -49,10 +54,15 @@ func (t *PRChainCode) CreateBulkTestDoc(stub hypConnect, args []string, txID str
 		return shim.Error(err.Error())
 	}
 
+	txTimestamp, timestampError := stub.Connection.GetTxTimestamp()
+	if timestampError != nil {
+		return shim.Error(timestampError.Error())
+	}
+
 	for _, d := range docs {
 
 		d.TxID = txID
-		d.Timestamp = time.Now().String()
+		d.Timestamp = txTimestamp.String()
 
 		bytes, _ := json.Marshal(d)
 
