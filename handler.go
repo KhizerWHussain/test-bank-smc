@@ -62,6 +62,8 @@ func (t *PRChainCode) CreateBulkTestDoc(stub hypConnect, args []string, txID str
 		}
 	}
 
+	RaiseEvent(stub, "BulkTestDocCreated", docs)
+
 	return shim.Success([]byte("Bulk Insert Success"))
 }
 
@@ -76,6 +78,8 @@ func (t *PRChainCode) GetTestDoc(stub hypConnect, args []string, txID string) pb
 	if err != nil || data == nil {
 		return shim.Error("Document not found")
 	}
+
+	RaiseEvent(stub, "TestDocRetrieved", data)
 
 	return shim.Success(data)
 }

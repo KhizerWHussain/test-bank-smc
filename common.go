@@ -19,7 +19,7 @@ func RaiseEvent(stub hypConnect, eventName string, args ...interface{}) (string,
 	fmt.Println("eventJSONasBytes : ", eventJSONasBytes)
 	mEventName := eventList.EventName
 	err3 := stub.Connection.SetEvent("ChainCodeEvent", []byte(eventJSONasBytes))
-	fmt.Printf("eventJSONasBytes : ", err3)
+	fmt.Printf("eventJSONasBytes ==> %v", err3)
 
 	if err3 != nil {
 		return "", err3
