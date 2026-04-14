@@ -55,7 +55,6 @@ func (t *PRChainCode) CreateBulkTestDoc(stub shim.ChaincodeStubInterface, args [
 
 		d.TxID = txID
 		d.Timestamp = time.Now().String()
-		d.TxData = args[0]
 
 		bytes, _ := json.Marshal(d)
 
