@@ -1,10 +1,10 @@
 module test-bank-smc
 
-go 1.20
+go 1.22
 
 require (
 	github.com/hyperledger/fabric-chaincode-go v0.0.0-20240704073638-9fb89180dc17
-	github.com/hyperledger/fabric-protos-go v0.3.7
+	github.com/hyperledger/fabric-protos-go v0.3.3
 )
 
 require (

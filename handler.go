@@ -20,7 +20,7 @@ func (t *PRChainCode) CreateTestDoc(stub shim.ChaincodeStubInterface, args []str
 	doc := Testdoc{
 		ID:        args[0],
 		Key:       args[1],
-		Document:  args[2],
+		Document:  "Testdoc",
 		TxData:    args[2],
 		TxID:      txID,
 		Timestamp: time.Now().String(),
