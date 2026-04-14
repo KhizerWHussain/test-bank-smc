@@ -12,7 +12,7 @@ import (
 func (t *PRChainCode) Invoke(stub shim.ChaincodeStubInterface) pb.Response {
 	fmt.Println("Invoke triggered")
 
-	function, args := stub.GetFunctionAndParameters()
+	function, _ := stub.GetFunctionAndParameters()
 	fmt.Println("Invoke is running for function::::: " + function)
 
 	txID := stub.GetTxID()
